@@ -31,18 +31,31 @@ app.use(cors({
   credentials: true
 }));
 
-// Rate limiting - more restrictive
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // Reduced from 100 to 50 requests per window
+// Environment-aware rate limiting
+const isProd = process.env.NODE_ENV === 'production';
+const generalLimiter = rateLimit({
+  windowMs: isProd ? 15 * 60 * 1000 : 1 * 60 * 1000, // 15 min prod, 1 min dev
+  max: isProd ? 50 : 1000, // 50 per 15 min prod, 1000 per min dev
   message: {
     error: 'Too many requests from this IP, please try again later.',
-    retryAfter: 900 // 15 minutes in seconds
+    retryAfter: isProd ? 900 : 60
   },
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use('/api/', limiter);
+app.use('/api/', generalLimiter);
+
+// Much looser rate limit for /api/lines in dev, strict in prod
+const linesLimiter = rateLimit({
+  windowMs: isProd ? 60 * 1000 : 10 * 1000, // 1 min prod, 10s dev
+  max: isProd ? 2 : 100, // 2 per min prod, 100 per 10s dev
+  message: {
+    error: 'Too many requests for line count. Please slow down.',
+    retryAfter: isProd ? 60 : 10
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Stricter rate limiting for contact form
 const contactLimiter = rateLimit({
@@ -66,6 +79,8 @@ app.use('/api/testimonials', require('./routes/testimonials'));
 app.use('/api/admin', require('./routes/admin'));
 // Public bug endpoint
 app.use('/api/bug', require('./routes/bug'));
+// Live code line count endpoint
+app.use('/api/lines', linesLimiter, require('./routes/lines'));
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -115,7 +130,7 @@ app.listen(PORT, () => {
 // Seed an initial admin in development if none exists (safe default)
 (async function seedAdmin() {
   try {
-    const Admin = require('./models/Admin').default;
+  const Admin = require('./models/Admin');
     const count = await Admin.countDocuments();
     if (count === 0 && process.env.NODE_ENV !== 'production') {
       const username = process.env.INIT_ADMIN_USERNAME || 'admin';

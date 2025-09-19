@@ -1,202 +1,103 @@
-# DevStudio Portfolio# DevStudio - Modern Full-Stack Portfolio Website
+# DevStudio - Modern Full-Stack Portfolio Website
 
+**Author:** [C-Elkins](https://github.com/C-Elkins)
 
+🚀 **A stunning, professional full-stack website built with React, Node.js, and MongoDB**
 
-A comprehensive full-stack development environment with integrated service management.**Author:** [C-Elkins](https://github.com/C-Elkins)
+This is a complete portfolio/agency website with modern design, glassmorphism effects, smooth animations, and a fully functional admin dashboard. Perfect for showcasing your development work and managing client inquiries.
 
+## 🎛️ **DevStudio Control Center**
 
-
-## 🚀 Quick Start🚀 **A stunning, professional full-stack website built with React, Node.js, and MongoDB**
-
-
-
-```bashThis is a complete portfolio/agency website with modern design, glassmorphism effects, smooth animations, and a fully functional admin dashboard. Perfect for showcasing your development work and managing client inquiries.
-
-# 1. Setup (one time)
-
-./scripts/setup/setup-project.sh## 🎛️ **DevStudio Control Center**
-
-
-
-# 2. Start everything  **NEW:** Modern React+Material-UI control center for managing all DevStudio services!
-
-./scripts/services/start-all.sh
+**NEW:** Modern React+Material-UI control center for managing all DevStudio services!
 
 ### Quick Start - GUI
 
-# 3. Open Control Center
-
-# Visit: http://localhost:5173Launch the sleek new control center with one command:
-
-```
+Launch the sleek new control center with one command:
 
 ```bash
-
-## 📁 Project Structure# Using npm script (recommended)
-
+# Using npm script (recommended)
 npm run gui
 
+# Or using the bash script
+./start-gui.sh
 ```
 
-📁 devstudio-portfolio/# Or using the bash script
+The GUI provides:
+- **Service Management**: Start/stop backend, frontend, and database with visual indicators
+- **Git Integration**: Status, pull, and push controls in the toolbar
+- **System Logs**: Real-time monitoring and debugging
+- **Quick Actions**: Launch VS Code, Finder, browser, and settings
+- **Modern Design**: Material-UI components with professional styling
 
-├── 📁 backend/           # Main backend API (Node.js + MongoDB)./start-gui.sh
+### Alternative Launch Methods
 
-├── 📁 frontend/          # Main frontend app (React)```
-
-├── 📁 control-center/    # Service management GUI (React + API)
-
-├── 📁 scripts/           # All automation scriptsThe GUI provides:
-
-│   ├── 📁 services/      # Service start/stop scripts- **Service Management**: Start/stop backend, frontend, and database with visual indicators
-
-│   ├── 📁 setup/         # Project setup scripts- **Git Integration**: Status, pull, and push controls in the toolbar
-
-│   └── 📁 legacy/        # Legacy scripts (archived)- **System Logs**: Real-time monitoring and debugging
-
-├── 📁 docs/              # All documentation- **Quick Actions**: Launch VS Code, Finder, browser, and settings
-
-├── 📁 config/            # Configuration files- **Modern Design**: Material-UI components with professional styling
-
-└── 📁 apps/              # Additional applications
-
-```### Alternative Launch Methods
-
-
-
-## 🎛️ Service Management```bash
-
+```bash
 # Install dependencies for all apps
+npm run install:all
 
-**Control Center**: http://localhost:5173 ← Start here!npm run install:all
+# Start just the GUI
+npm run gui
 
+# Install GUI dependencies separately
+npm run gui:install
 
+# Use the legacy Electron GUI (if needed)
+npm run old-gui
+```
 
-The Control Center provides a unified interface to manage all services:# Start just the GUI
-
-- Start/stop any service with one clicknpm run gui
-
-- Real-time service status monitoring  
-
-- System logs and debugging tools# Install GUI dependencies separately
-
-- Git repository informationnpm run gui:install
-
-
-
-### Service Ports# Use the legacy Electron GUI (if needed)
-
-- **Control Center GUI**: 5173npm run old-gui
-
-- **Control Center API**: 3001  ```
-
-- **Frontend App**: 3000
-
-- **Backend API**: 5002## ✨ Features
-
-- **MongoDB**: 27017
+## ✨ Features
 
 ### 🎨 **Frontend**
 
-## 📋 Available Scripts
-
 - **Modern Design**: Glassmorphism effects, gradient backgrounds, smooth animations
-
-### Quick Commands- **Fully Responsive**: Works perfectly on desktop, tablet, and mobile
-
-```bash- **Interactive Elements**: Hover effects, transitions, animated components
-
-./scripts/services/start-all.sh      # Start complete environment- **Contact Form**: Enhanced form with project type, budget, timeline fields
-
-./scripts/services/start-api.sh      # Control Center API only- **Portfolio Showcase**: Project gallery with modern card layouts
-
-./scripts/services/start-gui.sh      # Control Center GUI only  - **Testimonials**: Client feedback section
-
-./scripts/setup/setup-project.sh     # Project setup- **Performance Optimized**: Fast loading, efficient animations
-
-```
+- **Fully Responsive**: Works perfectly on desktop, tablet, and mobile
+- **Interactive Elements**: Hover effects, transitions, animated components
+- **Contact Form**: Enhanced form with project type, budget, timeline fields
+- **Portfolio Showcase**: Project gallery with modern card layouts
+- **Testimonials**: Client feedback section
+- **Performance Optimized**: Fast loading, efficient animations
 
 ### 🔧 **Backend API**
 
-### Individual Services
-
-```bash- **Contact Management**: Store and manage all contact form submissions
-
-./scripts/services/start-backend.sh   # Main backend- **Email Integration**: Automatic email notifications for new contacts
-
-./scripts/services/start-frontend.sh  # Main frontend  - **Rate Limiting**: Protection against spam and abuse
-
-./scripts/services/start-database.sh  # MongoDB- **Input Validation**: Comprehensive form validation and sanitization
-
-```- **MongoDB Integration**: Persistent data storage
-
+- **Contact Management**: Store and manage all contact form submissions
+- **Email Integration**: Automatic email notifications for new contacts
+- **Rate Limiting**: Protection against spam and abuse
+- **Input Validation**: Comprehensive form validation and sanitization
+- **MongoDB Integration**: Persistent data storage
 - **Admin Statistics**: Contact analytics and reporting
-
-## 📚 Documentation
 
 ## � Secret Admin Path (Portfolio Security)
 
-- **[Setup Guide](docs/SETUP-GUIDE.md)** - Comprehensive setup and usage
+**As of September 2025, this project uses a secret admin path for demo/portfolio security.**
 
-- **[Security Audit](docs/SECURITY_AUDIT.md)** - Security considerations  **As of September 2025, this project uses a secret admin path for demo/portfolio security.**
-
-- **[Contributing](docs/CONTRIBUTING.md)** - Development guidelines
-
-- **[Project Structure](docs/PROJECT_STRUCTURE.md)** - Detailed architecture- The previous invite token system (see `backend/models/InviteToken.js`) has been fully removed for simplicity and demo-friendliness.
-
+- The previous invite token system (see `backend/models/InviteToken.js`) has been fully removed for simplicity and demo-friendliness.
 - Admin access is now protected by a secret path (e.g., `/admin-PORTFOLIO2025`). Only users who know this path can access the admin login screen.
-
-## 🐛 Troubleshooting- All invite-related endpoints, models, and UI have been deleted.
-
+- All invite-related endpoints, models, and UI have been deleted.
 - This approach is ideal for portfolio/demo use—just share the secret path with trusted viewers.
 
-**API Server Won't Start Back Up?**
-
-```bash**To change the secret path:**
-
-cd control-center && node server.jsEdit the `REACT_APP_ADMIN_PATH` in your frontend environment or update the path in `App.jsx` as needed.
-
-```
+**To change the secret path:**
+Edit the `REACT_APP_ADMIN_PATH` in your frontend environment or update the path in `App.jsx` as needed.
 
 **Note:** For real production use, always combine this with strong authentication and consider additional access controls.
 
-**Port Already in Use?**
-
-```bash- **Comprehensive Overview**: Stats, recent contacts, system status
-
-lsof -ti :PORT | xargs kill -9  # Replace PORT with actual port number- **Contact Management**: View, search, filter, and respond to inquiries
-
-```- **Project Management**: Manage portfolio projects
-
+- **Comprehensive Overview**: Stats, recent contacts, system status
+- **Contact Management**: View, search, filter, and respond to inquiries
+- **Project Management**: Manage portfolio projects
 - **Analytics**: Visual charts and trends
-
-**Need Help?** Check the [Setup Guide](docs/SETUP-GUIDE.md) for detailed instructions.- **Settings Panel**: System configuration and maintenance
-
+- **Settings Panel**: System configuration and maintenance
 - **Real-time Updates**: Live data synchronization
-
-## 🎯 Key Features
 
 ## 🛠️ Tech Stack
 
-- 🎛️ **Unified Control Center** - Manage all services from one interface
+- **Frontend**: React 18, Tailwind CSS, Lucide Icons
+- **Backend**: Node.js, Express.js, MongoDB, Mongoose
+- **Security**: Helmet, CORS, Rate Limiting, Input Validation
+- **Email**: Nodemailer with SMTP support
+- **Development**: Nodemon, ES6+, Modern JavaScript
 
-- 🚀 **One-Command Setup** - Get running in minutes  - **Frontend**: React 18, Tailwind CSS, Lucide Icons
+## 🚀 Quick Start
 
-- 📊 **Real-time Monitoring** - Live service status updates- **Backend**: Node.js, Express.js, MongoDB, Mongoose
-
-- 🔧 **Easy Development** - Hot reload, logging, debugging tools- **Security**: Helmet, CORS, Rate Limiting, Input Validation
-
-- 📚 **Great Documentation** - Everything is explained- **Email**: Nodemailer with SMTP support
-
-- 🧹 **Clean Organization** - Logical, maintainable structure- **Development**: Nodemon, ES6+, Modern JavaScript
-
-
-
----## 🚀 Quick Start
-
-
-
-**Get started in 30 seconds:** `./scripts/services/start-all.sh` → http://localhost:5173### Prerequisites
+### Prerequisites
 
 - Node.js (v16 or higher)
 - MongoDB (local or Atlas)

@@ -3,6 +3,8 @@ import { Eye, EyeOff, Shield, Lock, User } from 'lucide-react';
 
 const AdminLogin = ({ onLogin }) => {
   const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [twoFAToken, setTwoFAToken] = useState('');
+  const [require2FA, setRequire2FA] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -13,16 +15,23 @@ const AdminLogin = ({ onLogin }) => {
     setError('');
 
     try {
+      const payload = { ...credentials };
+      if (require2FA) payload.twoFAToken = twoFAToken;
       const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(credentials)
+        body: JSON.stringify(payload)
       });
 
       const data = await res.json();
       if (!res.ok) {
-        setError(data.message || 'Invalid credentials');
-        setCredentials({ username: '', password: '' });
+        if (data.message === '2FA token required') {
+          setRequire2FA(true);
+          setError('2FA code required. Please enter your authenticator code.');
+        } else {
+          setError(data.message || 'Invalid credentials');
+          setCredentials({ username: '', password: '' });
+        }
         setIsLoading(false);
         return;
       }
@@ -106,10 +115,28 @@ const AdminLogin = ({ onLogin }) => {
               </div>
             )}
 
+            {/* 2FA Token Field */}
+            {require2FA && (
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  2FA Code
+                </label>
+                <input
+                  type="text"
+                  value={twoFAToken}
+                  onChange={e => setTwoFAToken(e.target.value)}
+                  className="w-full pl-4 pr-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:border-purple-400 focus:outline-none transition-colors"
+                  placeholder="Enter 2FA code"
+                  required
+                  autoComplete="one-time-code"
+                />
+              </div>
+            )}
+
             {/* Login Button */}
             <button
               type="submit"
-              disabled={isLoading || !credentials.username || !credentials.password}
+              disabled={isLoading || !credentials.username || !credentials.password || (require2FA && !twoFAToken)}
               className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl text-white font-semibold shadow-xl hover:shadow-2xl hover:from-pink-600 hover:to-purple-600 active:scale-95 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-pink-400"
               aria-label="Access Dashboard"
             >

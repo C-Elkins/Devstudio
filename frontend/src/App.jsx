@@ -1,7 +1,8 @@
 
 import axios from 'axios';
-import { ArrowRight, Star, Menu, X, Github, Twitter, Linkedin, Send, MapPin, Phone, Mail } from 'lucide-react';
-import { Code2, Globe, Wrench, BarChart3, Layers, Database, Server, Award, Users, BookOpen } from 'lucide-react';
+import { ArrowRight, Star, Github, Twitter, Linkedin, Send, MapPin, Phone, Mail } from 'lucide-react';
+import { Code2, Globe, Wrench, BarChart3, Layers, Database, Award, BookOpen } from 'lucide-react';
+import { Atom, Cloud, Box, Database as LucideDatabase, Server as LucideServer, Feather, CreditCard, Globe2, Languages } from 'lucide-react';
 import SecureAdmin from './SecureAdmin';
 import logger from './logger';
 import ReportBugFloating from './ReportBugFloating';
@@ -10,33 +11,6 @@ import Interactive3DProjects from './components/Interactive3DProjects';
 import React, { useState, useEffect, useRef } from 'react';
 
 // FlipCounter component for animated counting
-function FlipCounter({ target, duration = 2000, className = '', prefix = '', suffix = '' }) {
-  const [count, setCount] = React.useState(0);
-  useEffect(() => {
-  // let start = 0;
-    let raf;
-    const startTime = performance.now();
-    function animate(now) {
-      const elapsed = now - startTime;
-      const progress = Math.min(elapsed / duration, 1);
-      const value = Math.floor(progress * target);
-      setCount(value);
-      if (progress < 1) {
-        raf = requestAnimationFrame(animate);
-      } else {
-        setCount(target);
-      }
-    }
-    raf = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(raf);
-  }, [target, duration]);
-  // Simple flip style
-  return (
-    <span className={`inline-block font-mono tabular-nums ${className}`} style={{minWidth: `${String(target).length}ch`}}>
-      {prefix}{count.toLocaleString()}{suffix}
-    </span>
-  );
-}
 
 
 
@@ -98,6 +72,48 @@ const App = () => {
   const [projects, setProjects] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [stats, setStats] = useState({ contributions: 0, technologies: 0, awards: 0, rating: 0 });
+  const [lineCount, setLineCount] = useState(0);
+  const [displayLineCount, setDisplayLineCount] = useState(0);
+
+  // Live code line count (static for now, but could be fetched from an API or script)
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchLineCount() {
+      try {
+        // Always use the backend port for local development
+        const res = await fetch('http://localhost:5002/api/lines');
+        const data = await res.json();
+        if (isMounted && data && typeof data.lines === 'number') {
+          setLineCount(data.lines);
+        }
+      } catch (e) {
+        // fallback: do not update lineCount on error
+      }
+    }
+    fetchLineCount();
+  const interval = setInterval(fetchLineCount, 1000); // update every 1s for real-time
+    return () => { isMounted = false; clearInterval(interval); };
+  }, []);
+
+  // Animate the number up to the real value
+  useEffect(() => {
+    if (displayLineCount === lineCount) return;
+    let start = displayLineCount;
+    let end = lineCount;
+    let duration = 1200;
+    let startTime = null;
+    function animateCount(ts) {
+      if (!startTime) startTime = ts;
+      const progress = Math.min((ts - startTime) / duration, 1);
+      const value = Math.floor(start + (end - start) * progress);
+      setDisplayLineCount(value);
+      if (progress < 1) {
+        requestAnimationFrame(animateCount);
+      }
+    }
+    requestAnimationFrame(animateCount);
+    // eslint-disable-next-line
+  }, [lineCount]);
   const [skills, setSkills] = useState([]);
   const [showAdmin, setShowAdmin] = useState(false);
   // Fade transition for section changes (must be at top level)
@@ -107,6 +123,30 @@ const App = () => {
 
   useEffect(() => {
     setFade(false);
+    // Only animate if not already near the top
+    if (window.scrollY > 32) {
+      let cancelled = false;
+      const scrollDuration = 1400;
+      const start = window.scrollY;
+      const startTime = performance.now();
+      function easeInOutQuad(t) {
+        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      }
+      function animateScroll(now) {
+        if (cancelled) return;
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / scrollDuration, 1);
+        const eased = easeInOutQuad(progress);
+        window.scrollTo(0, start * (1 - eased));
+        if (progress < 1) {
+          requestAnimationFrame(animateScroll);
+        }
+      }
+      const onUserScroll = () => { cancelled = true; window.removeEventListener('wheel', onUserScroll); window.removeEventListener('touchmove', onUserScroll); };
+      window.addEventListener('wheel', onUserScroll, { passive: true });
+      window.addEventListener('touchmove', onUserScroll, { passive: true });
+      requestAnimationFrame(animateScroll);
+    }
     const timeout = setTimeout(() => setFade(true), 50);
     return () => clearTimeout(timeout);
   }, [activeSection]);
@@ -594,9 +634,16 @@ const App = () => {
               <span className="ml-2 px-2 py-1 text-xs rounded bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold">2025</span>
             </h3>
             <div className="flex flex-wrap gap-8 items-center justify-center mb-2">
-              <div className="flex flex-col items-center">
-                <Code2 className="w-8 h-8 text-purple-300 mb-1" />
-                <span className="text-lg font-semibold text-white mt-1">22,679</span>
+              <div className="flex flex-col items-center relative">
+                <div className="flex items-center gap-2 mb-1">
+                  <Code2 className="w-8 h-8 text-purple-300" />
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                  </span>
+                  <span className="ml-2 px-2 py-0.5 text-xs rounded bg-green-600/80 text-white font-bold tracking-wide animate-pulse">LIVE</span>
+                </div>
+                <span className="text-2xl font-extrabold text-white mt-1 transition-all duration-300" style={{letterSpacing: '1px'}}>{displayLineCount.toLocaleString()}</span>
                 <span className="text-gray-400 text-xs">Lines of Code</span>
               </div>
               <div className="flex flex-col items-center">
@@ -613,25 +660,26 @@ const App = () => {
             <p className="text-purple-400 font-semibold text-lg mt-2">Estimated time spent: <span className="text-white">~570 hours</span> <span className="text-gray-400 text-sm">(3+ months of focused development)</span></p>
             <ul className="grid grid-cols-2 gap-4 text-base text-gray-200 mb-4 mt-4">
               <li className="flex items-center gap-2"><BarChart3 className="w-6 h-6 text-purple-300" /> React & Vite Frontend</li>
-              <li className="flex items-center gap-2"><Server className="w-6 h-6 text-green-400" /> Node.js/Express Backend</li>
+              <li className="flex items-center gap-2"><LucideServer className="w-6 h-6 text-green-400" /> Node.js/Express Backend</li>
               <li className="flex items-center gap-2"><Layers className="w-6 h-6 text-yellow-300" /> Python (Data/AI)</li>
               <li className="flex items-center gap-2"><Award className="w-6 h-6 text-blue-300" /> Tailwind CSS</li>
               <li className="flex items-center gap-2"><Database className="w-6 h-6 text-green-300" /> MongoDB</li>
               <li className="flex items-center gap-2"><BookOpen className="w-6 h-6 text-blue-400" /> PostgreSQL</li>
             </ul>
-            {/* Roadmap: Always Open Section */}
+            {/* Goals & Planning Section */}
             <div className="mt-2 bg-black/20 rounded-xl p-4 transition-all duration-300">
-              <div className="font-semibold text-pink-300 text-lg flex items-center gap-2 mb-2">Development Roadmap <span className="ml-1 text-xs bg-pink-400/20 px-2 py-0.5 rounded">Milestones</span></div>
-              <ol className="list-decimal ml-6 mt-2 text-gray-200 space-y-2">
-                <li><span className="font-bold text-purple-300">Initial Setup:</span> Project bootstrapped, monorepo structure, GitHub Actions, and CI/CD.</li>
-                <li><span className="font-bold text-purple-300">Admin Security:</span> Secret admin path, JWT auth, invite system removed, security audit.</li>
-                <li><span className="font-bold text-purple-300">UI/UX Polish:</span> Apple-style glassmorphism, parallax, premium nav, dropdowns, bug report modal.</li>
-                <li><span className="font-bold text-purple-300">About/Stats:</span> Dynamic About, real code stats, flip counter, boxed layout, matching heights.</li>
-                <li><span className="font-bold text-purple-300">Fun & Content:</span> Interactive puzzle, 3D projects, testimonials, expanded content, roadmap tab.</li>
-                <li><span className="font-bold text-purple-300">Final Polish:</span> Accessibility, mobile, performance, and launch readiness.</li>
-                <li><span className="font-bold text-purple-300">Continuous Improvement:</span> Ongoing bug fixes, user feedback, and new feature rollouts based on real-world use.</li>
-                <li><span className="font-bold text-purple-300">Community & Open Source:</span> Documentation, GitHub polish, contribution guidelines, and community engagement.</li>
-              </ol>
+              <div className="font-semibold text-pink-300 text-lg flex items-center gap-2 mb-2">Goals & Planning <span className="ml-1 text-xs bg-pink-400/20 px-2 py-0.5 rounded">Checklist</span></div>
+              <ul className="ml-4 mt-2 text-gray-200 space-y-2">
+                <li><span className="font-bold text-green-400">✓</span> Launch MVP and core portfolio features</li>
+                <li><span className="font-bold text-green-400">✓</span> Harden admin security and secret path</li>
+                <li><span className="font-bold text-green-400">✓</span> Polish UI/UX with Apple-style glassmorphism and parallax</li>
+                <li><span className="font-bold text-green-400">✓</span> Add dynamic About stats and live code line counting</li>
+                <li><span className="font-bold text-yellow-300">•</span> Add interactive game/puzzle and more fun content</li>
+                <li><span className="font-bold text-yellow-300">•</span> Expand testimonials and project case studies</li>
+                <li><span className="font-bold text-yellow-300">•</span> Improve accessibility and mobile experience</li>
+                <li><span className="font-bold text-blue-400">…</span> Ongoing: Gather user feedback and iterate</li>
+                <li><span className="font-bold text-blue-400">…</span> Future: Open source, community engagement, and new features</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -688,61 +736,23 @@ const App = () => {
               </div>
             </div>
           </div>
-          {/* Website Development Journey Section */}
-          <div className="glass-apple max-w-5xl mx-auto p-12 rounded-3xl animate-fade-in overflow-visible mt-20 mb-20 flex flex-col md:flex-row gap-12 items-center">
-            <div className="flex-1 flex flex-col gap-6">
-              <h3 className="text-3xl font-bold mb-4 bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">How This Website Was Built</h3>
-              <p className="text-gray-300 text-lg leading-relaxed mb-2">
-                This portfolio is the result of countless hours of design, coding, and iteration. Every page, animation, and feature was crafted with care, using modern web technologies and a passion for digital excellence.
-              </p>
-              <ul className="grid grid-cols-2 gap-4 text-base text-gray-200 mb-4">
-                <li className="flex items-center gap-2"><span className="text-2xl">⚛️</span> React & Vite Frontend</li>
-                <li className="flex items-center gap-2"><span className="text-2xl">🟩</span> Node.js/Express Backend</li>
-                <li className="flex items-center gap-2"><span className="text-2xl">🐍</span> Python (Data/AI)</li>
-                <li className="flex items-center gap-2"><span className="text-2xl">🌬️</span> Tailwind CSS</li>
-                <li className="flex items-center gap-2"><span className="text-2xl">🍃</span> MongoDB</li>
-                <li className="flex items-center gap-2"><span className="text-2xl">🐘</span> PostgreSQL</li>
-              </ul>
-              <div className="flex flex-wrap gap-6 items-center mt-2">
-                <div className="flex flex-col items-center">
-                  <span className="text-4xl">💻</span>
-                  <span className="text-lg font-semibold text-white mt-1">{window.__DEVSTUDIO_LINECOUNT || 4000}</span>
-                  <span className="text-gray-400 text-xs">Lines of Code</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <span className="text-4xl">🌐</span>
-                  <span className="text-lg font-semibold text-white mt-1">7</span>
-                  <span className="text-gray-400 text-xs">Languages/Frameworks</span>
-                </div>
-                <div className="flex flex-col items-center">
-                  <span className="text-4xl">🛠️</span>
-                  <span className="text-lg font-semibold text-white mt-1">Open Source</span>
-                  <span className="text-gray-400 text-xs">Built with ❤️</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex-1 flex flex-col gap-6 items-center">
-              <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600" alt="Coding Team" className="rounded-2xl shadow-2xl w-full max-w-xs mb-4" loading="lazy" />
-              <img src="https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600" alt="Code on Screen" className="rounded-2xl shadow-2xl w-full max-w-xs" loading="lazy" />
-            </div>
-          </div>
       </div>
     </section>
   );
 
   const featuredTech = [
-    { name: 'React', color: '#61DAFB', icon: '⚛️' },
-    { name: 'Next.js', color: '#000', icon: '⏭️' },
-    { name: 'Node.js', color: '#339933', icon: '🟩' },
-    { name: 'TypeScript', color: '#3178C6', icon: '🟦' },
-    { name: 'Python', color: '#3776AB', icon: '🐍' },
-    { name: 'AWS', color: '#FF9900', icon: '☁️' },
-    { name: 'Docker', color: '#2496ED', icon: '🐳' },
-    { name: 'MongoDB', color: '#47A248', icon: '🍃' },
-    { name: 'PostgreSQL', color: '#336791', icon: '🐘' },
-    { name: 'Tailwind', color: '#38BDF8', icon: '🌬️' },
-    { name: 'GraphQL', color: '#E10098', icon: '🔺' },
-    { name: 'Stripe', color: '#635BFF', icon: '💳' },
+  { name: 'React', color: '#61DAFB', icon: <Atom className="w-8 h-8 text-cyan-400" /> },
+    { name: 'Next.js', color: '#000', icon: <Feather className="w-8 h-8" /> },
+  { name: 'Node.js', color: '#339933', icon: <LucideServer className="w-8 h-8 text-green-400" /> },
+    { name: 'TypeScript', color: '#3178C6', icon: <BookOpen className="w-8 h-8" /> },
+  { name: 'Python', color: '#3776AB', icon: <Languages className="w-8 h-8 text-yellow-400" /> },
+  { name: 'AWS', color: '#FF9900', icon: <Cloud className="w-8 h-8 text-yellow-400" /> },
+  { name: 'Docker', color: '#2496ED', icon: <Box className="w-8 h-8 text-blue-400" /> },
+    { name: 'MongoDB', color: '#47A248', icon: <LucideDatabase className="w-8 h-8" /> },
+    { name: 'PostgreSQL', color: '#336791', icon: <LucideServer className="w-8 h-8" /> },
+    { name: 'Tailwind', color: '#38BDF8', icon: <Feather className="w-8 h-8" /> },
+    { name: 'GraphQL', color: '#E10098', icon: <Globe2 className="w-8 h-8" /> },
+    { name: 'Stripe', color: '#635BFF', icon: <CreditCard className="w-8 h-8" /> },
   ];
 
   const ProjectsSection = () => (
@@ -751,20 +761,18 @@ const App = () => {
         <h2 className="text-5xl font-bold text-center mb-20 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent drop-shadow-xl">
           Featured Projects
         </h2>
-        {/* Animated Featured Technologies Carousel */}
+        {/* Modern Featured Technologies Grid */}
         <div className="relative mb-24">
           <h3 className="text-3xl font-bold text-center mb-10 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Featured Technologies</h3>
-          <div className="overflow-x-auto whitespace-nowrap py-6 px-2 glass-apple rounded-2xl shadow-2xl animate-fade-in hide-scrollbar">
-            <div className="inline-flex gap-10 min-w-full animate-marquee" style={{minWidth:'200%'}}>
-              {[...featuredTech, ...featuredTech].map((tech, idx) => (
-                <div key={tech.name+idx} className="flex flex-col items-center min-w-[120px] mx-2">
-                  <div className="w-16 h-16 rounded-full flex items-center justify-center mb-3 text-3xl shadow-lg" style={{background: `linear-gradient(135deg, ${tech.color} 60%, #fff2 100%)`}}>
-                    <span>{tech.icon}</span>
-                  </div>
-                  <div className="font-semibold text-lg text-white drop-shadow" style={{color: tech.color}}>{tech.name}</div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8 glass-apple rounded-2xl shadow-2xl p-8">
+            {featuredTech.map((tech, idx) => (
+              <div key={tech.name+idx} className="flex flex-col items-center justify-center">
+                <div className="w-14 h-14 rounded-xl flex items-center justify-center mb-2 bg-white/10 shadow-lg border border-white/10" style={{color: tech.color}}>
+                  {tech.icon}
                 </div>
-              ))}
-            </div>
+                <div className="font-semibold text-base text-white mb-1" style={{color: tech.color}}>{tech.name}</div>
+              </div>
+            ))}
           </div>
         </div>
         {/* 3D Interactive Project Cards */}
@@ -887,7 +895,7 @@ const App = () => {
   useEffect(() => {
     const path = window.location.pathname.replace(/\/$/, '');
     // Set your secret admin path here:
-    const secretPath = '/admin-PORTFOLIO2025';
+  const secretPath = '/admin';
     if (path === secretPath) {
       setShowAdmin(true);
     }

@@ -8,20 +8,85 @@ const SecureAdmin = ({ onBack }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [admins, setAdmins] = useState([]);
   const [newAdmin, setNewAdmin] = useState({ username: '', password: '', email: '' });
+  // 2FA state and handlers
+  const [twoFA, setTwoFA] = useState({ enabled: false, qr: '', otpauth: '' });
+  const [twoFAToken, setTwoFAToken] = useState('');
+  const [twoFAStatus, setTwoFAStatus] = useState('');
 
-  // Define loadAdmins early so hooks remain stable
   const apiBase = process.env.REACT_APP_API_URL || 'http://localhost:5002/api';
   const loadAdmins = React.useCallback(async () => {
     try {
       const auth = localStorage.getItem('adminAuth');
       const token = auth ? JSON.parse(auth).token : null;
-  const res = await fetch(`${apiBase}/admin/list`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
-  if (!res.ok) return;
-  const data = await res.json();
-  setAdmins(data.data || []);
-    } catch (err) {
-    }
+      const res = await fetch(`${apiBase}/admin/list`, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+      if (!res.ok) return;
+      const data = await res.json();
+      setAdmins(data.data || []);
+    } catch (err) {}
   }, [apiBase]);
+
+  // 2FA setup/load status
+  const load2FAStatus = async () => {
+    try {
+      setTwoFAStatus('');
+      setTwoFA({ enabled: false, qr: '', otpauth: '' });
+    } catch {}
+  };
+
+  const handle2FASetup = async () => {
+    try {
+      setTwoFAStatus('');
+      const auth = localStorage.getItem('adminAuth');
+      const token = auth ? JSON.parse(auth).token : null;
+      const res = await fetch(`${apiBase}/admin/2fa/setup`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: token ? `Bearer ${token}` : '' }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || '2FA setup failed');
+      setTwoFA({ enabled: false, qr: data.qr, otpauth: data.otpauth });
+    } catch (err) {
+      setTwoFAStatus('2FA setup failed: ' + (err.message || err));
+    }
+  };
+
+  const handle2FAEnable = async () => {
+    try {
+      setTwoFAStatus('');
+      const auth = localStorage.getItem('adminAuth');
+      const token = auth ? JSON.parse(auth).token : null;
+      const res = await fetch(`${apiBase}/admin/2fa/enable`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: token ? `Bearer ${token}` : '' },
+        body: JSON.stringify({ token: twoFAToken })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || '2FA enable failed');
+      setTwoFAStatus('2FA enabled!');
+      setTwoFA({ ...twoFA, enabled: true });
+    } catch (err) {
+      setTwoFAStatus('2FA enable failed: ' + (err.message || err));
+    }
+  };
+
+  const handle2FADisable = async () => {
+    try {
+      setTwoFAStatus('');
+      const auth = localStorage.getItem('adminAuth');
+      const token = auth ? JSON.parse(auth).token : null;
+      const res = await fetch(`${apiBase}/admin/2fa/disable`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: token ? `Bearer ${token}` : '' },
+        body: JSON.stringify({ token: twoFAToken })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || '2FA disable failed');
+      setTwoFAStatus('2FA disabled.');
+      setTwoFA({ enabled: false, qr: '', otpauth: '' });
+    } catch (err) {
+      setTwoFAStatus('2FA disable failed: ' + (err.message || err));
+    }
+  };
 
   useEffect(() => {
     const checkAuthStatus = () => {
@@ -145,6 +210,35 @@ const SecureAdmin = ({ onBack }) => {
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
       <div className="max-w-4xl mx-auto">
+        {/* 2FA Management */}
+        <div className="mb-6">
+          <h3 className="font-semibold mb-2">Two-Factor Authentication (2FA)</h3>
+          <div className="bg-white/5 border border-white/10 rounded p-4 space-y-2">
+            {twoFA.enabled ? (
+              <>
+                <div className="text-green-400">2FA is enabled for your account.</div>
+                <input value={twoFAToken} onChange={e=>setTwoFAToken(e.target.value)} placeholder="Enter 2FA code to disable" className="w-full p-2 bg-black/20 rounded" />
+                <button onClick={handle2FADisable} className="px-3 py-2 bg-red-600 rounded">Disable 2FA</button>
+              </>
+            ) : (
+              <>
+                {twoFA.qr ? (
+                  <>
+                    <div>Scan this QR code with your authenticator app:</div>
+                    <div className="flex justify-center my-2">
+                      <img src={twoFA.qr} alt="2FA QR" style={{ width: 180, height: 180, background: '#fff', padding: 8, borderRadius: 8 }} />
+                    </div>
+                    <input value={twoFAToken} onChange={e=>setTwoFAToken(e.target.value)} placeholder="Enter 2FA code from app" className="w-full p-2 bg-black/20 rounded" />
+                    <button onClick={handle2FAEnable} className="px-3 py-2 bg-green-600 rounded">Enable 2FA</button>
+                  </>
+                ) : (
+                  <button onClick={handle2FASetup} className="px-3 py-2 bg-blue-600 rounded">Setup 2FA</button>
+                )}
+              </>
+            )}
+            {twoFAStatus && <div className="text-yellow-400 mt-2">{twoFAStatus}</div>}
+          </div>
+        </div>
         <div className="flex items-center justify-between mb-6">
           <div className="text-2xl font-bold">Admin Management</div>
           <div className="flex items-center space-x-2">
@@ -189,6 +283,6 @@ const SecureAdmin = ({ onBack }) => {
       </div>
     </div>
   );
-};
+}
 
 export default SecureAdmin;

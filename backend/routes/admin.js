@@ -1,6 +1,27 @@
+// GET /api/admin/list - list all admins (email and role only)
+router.get('/list', async (req, res) => {
+  try {
+    const admins = await Admin.find({}, 'email role').lean();
+    res.json(admins);
+  } catch (err) {
+    logger.error({ err }, 'Error listing admins');
+    res.status(500).json({ message: 'Could not list admins' });
+  }
+});
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const Admin = require('../models/Admin').default;
+const Admin = require('../models/Admin');
+const speakeasy = require('speakeasy');
+const qrcode = require('qrcode');
+// Role-based middleware
+function requireRole(role) {
+  return function (req, res, next) {
+    if (!req.admin || !req.admin.role || req.admin.role !== role) {
+      return res.status(403).json({ message: 'Forbidden: insufficient role' });
+    }
+    next();
+  };
+}
 const { body, validationResult } = require('express-validator');
 const { logger } = require('../logger');
 
@@ -10,8 +31,12 @@ const JWT_SECRET = process.env.JWT_SECRET || 'devstudio-secret';
 const TOKEN_EXPIRY = '2h';
 const BugReport = require('../models/BugReport');
 
-// GET /api/admin/dashboard - returns site metrics
+// GET /api/admin/dashboard - returns site metrics (admin or superadmin)
 router.get('/dashboard', authMiddleware, async (req, res) => {
+// Example: restrict a route to superadmin only
+// router.get('/superadmin/only', authMiddleware, requireRole('superadmin'), (req, res) => {
+//   res.json({ message: 'Only superadmins can see this.' });
+// });
   try {
     const totalContacts = await require('../models/Contact').countDocuments();
     const unresponded = await require('../models/Contact').countDocuments({ responded: false });
@@ -64,7 +89,9 @@ function authMiddleware(req, res, next) {
 // If no admins exist, allow creation (initial setup). Otherwise require auth.
 router.post('/create', [
   body('username').isLength({ min: 3 }).withMessage('Username too short'),
-  body('password').isLength({ min: 6 }).withMessage('Password too short')
+  body('password').isLength({ min: 6 }).withMessage('Password too short'),
+  authMiddleware,
+  requireRole('superadmin')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -116,8 +143,66 @@ router.post('/login', [
     const ok = await admin.verifyPassword(password);
     if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
 
-    const token = jwt.sign({ id: admin._id, username: admin.username }, JWT_SECRET, { expiresIn: TOKEN_EXPIRY });
+    // 2FA check
+    if (admin.twoFAEnabled) {
+      // Require 2FA token in login
+      if (!req.body.twoFAToken) {
+        return res.status(401).json({ message: '2FA token required' });
+      }
+      const verified = speakeasy.totp.verify({
+        secret: admin.twoFASecret,
+        encoding: 'base32',
+        token: req.body.twoFAToken
+      });
+      if (!verified) return res.status(401).json({ message: 'Invalid 2FA token' });
+    }
+    const token = jwt.sign({ id: admin._id, username: admin.username, role: admin.role }, JWT_SECRET, { expiresIn: TOKEN_EXPIRY });
     res.json({ success: true, token });
+// 2FA setup (admin only)
+router.post('/2fa/setup', authMiddleware, async (req, res) => {
+  const admin = await Admin.findById(req.admin.id);
+  if (!admin) return res.status(404).json({ message: 'Admin not found' });
+  if (admin.twoFAEnabled) return res.status(400).json({ message: '2FA already enabled' });
+  const secret = speakeasy.generateSecret({ name: `DevStudio (${admin.username})` });
+  admin.twoFASecret = secret.base32;
+  await admin.save();
+  const otpauth = secret.otpauth_url;
+  const qr = await qrcode.toDataURL(otpauth);
+  res.json({ otpauth, qr });
+});
+
+// 2FA enable (admin only)
+router.post('/2fa/enable', authMiddleware, async (req, res) => {
+  const { token } = req.body;
+  const admin = await Admin.findById(req.admin.id);
+  if (!admin || !admin.twoFASecret) return res.status(400).json({ message: '2FA setup required' });
+  const verified = speakeasy.totp.verify({
+    secret: admin.twoFASecret,
+    encoding: 'base32',
+    token
+  });
+  if (!verified) return res.status(401).json({ message: 'Invalid 2FA token' });
+  admin.twoFAEnabled = true;
+  await admin.save();
+  res.json({ success: true, message: '2FA enabled' });
+});
+
+// 2FA disable (admin only)
+router.post('/2fa/disable', authMiddleware, async (req, res) => {
+  const { token } = req.body;
+  const admin = await Admin.findById(req.admin.id);
+  if (!admin || !admin.twoFASecret) return res.status(400).json({ message: '2FA not enabled' });
+  const verified = speakeasy.totp.verify({
+    secret: admin.twoFASecret,
+    encoding: 'base32',
+    token
+  });
+  if (!verified) return res.status(401).json({ message: 'Invalid 2FA token' });
+  admin.twoFAEnabled = false;
+  admin.twoFASecret = undefined;
+  await admin.save();
+  res.json({ success: true, message: '2FA disabled' });
+});
   } catch (err) {
     logger.error({ err }, 'Login error');
     res.status(500).json({ message: 'Server error' });
