@@ -3,6 +3,7 @@ import { ArrowRight, Github, ExternalLink, Star, Clock, Users, TrendingUp } from
 
 const Interactive3DProjects = ({ projects }) => {
   const [selectedProject, setSelectedProject] = useState(null);
+  // eslint-disable-next-line no-unused-vars
   const [hoveredCard, setHoveredCard] = useState(null);
   const cardRefs = useRef([]);
 
