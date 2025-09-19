@@ -1,4 +1,7 @@
+
 # DevStudio - Modern Full-Stack Portfolio Website
+
+**Author:** [C-Elkins](https://github.com/C-Elkins)
 
 🚀 **A stunning, professional full-stack website built with React, Node.js, and MongoDB**
 

@@ -21,7 +21,7 @@
     "mongodb",
     "fullstack"
   ],
-  "author": "Your Name",
+  "author": "C-Elkins",
   "license": "MIT",
   "dependencies": {
     "playwright": "^1.55.0"
