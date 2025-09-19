@@ -62,6 +62,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/projects', require('./routes/projects'));
 app.use('/api/contact', contactLimiter, require('./routes/contact'));
 app.use('/api/testimonials', require('./routes/testimonials'));
+// Admin routes (auth + management)
+app.use('/api/admin', require('./routes/admin'));
+// Public bug endpoint
+app.use('/api/bug', require('./routes/bug'));
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -107,6 +111,22 @@ app.listen(PORT, () => {
   logger.info({ port: PORT, env: process.env.NODE_ENV || 'development' }, 'Server started');
   logger.info({ url: `http://localhost:${PORT}/api` }, 'API URL');
 });
+
+// Seed an initial admin in development if none exists (safe default)
+(async function seedAdmin() {
+  try {
+    const Admin = require('./models/Admin').default;
+    const count = await Admin.countDocuments();
+    if (count === 0 && process.env.NODE_ENV !== 'production') {
+      const username = process.env.INIT_ADMIN_USERNAME || 'admin';
+      const password = process.env.INIT_ADMIN_PASSWORD || 'admin';
+      await Admin.createAdmin(username, password, process.env.INIT_ADMIN_EMAIL || 'admin@example.com');
+      logger.info('Seeded initial admin (dev only).');
+    }
+  } catch (err) {
+    logger.warn({ err }, 'Could not seed admin');
+  }
+})();
 
 // Readiness endpoint - checks DB connection
 app.get('/api/readiness', (req, res) => {

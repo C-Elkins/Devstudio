@@ -12,26 +12,31 @@ const AdminLogin = ({ onLogin }) => {
     setIsLoading(true);
     setError('');
 
-    // Simulate network delay for security
-    await new Promise(resolve => setTimeout(resolve, 800));
+    try {
+      const res = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5002/api'}/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(credentials)
+      });
 
-    // Check credentials (in production, this would be server-side)
-    if (credentials.username === 'admin' && credentials.password === 'admin') {
-      // Store login state (expires in 1 hour)
-      const loginData = {
-        authenticated: true,
-        timestamp: Date.now(),
-        expires: Date.now() + (60 * 60 * 1000) // 1 hour
-      };
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.message || 'Invalid credentials');
+        setCredentials({ username: '', password: '' });
+        setIsLoading(false);
+        return;
+      }
+
+      // Store token in localStorage with expiry metadata
+      const token = data.token;
+      const loginData = { token, timestamp: Date.now(), expires: Date.now() + (2 * 60 * 60 * 1000) };
       localStorage.setItem('adminAuth', JSON.stringify(loginData));
       onLogin(true);
-    } else {
-      setError('Invalid credentials. Access denied.');
-      // Clear the form on failed attempt
-      setCredentials({ username: '', password: '' });
+    } catch (err) {
+      setError('Network error');
+    } finally {
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (

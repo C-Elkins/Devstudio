@@ -25,7 +25,20 @@ This is a complete portfolio/agency website with modern design, glassmorphism ef
 - **MongoDB Integration**: Persistent data storage
 - **Admin Statistics**: Contact analytics and reporting
 
-### 👨‍💼 **Admin Dashboard**
+
+## � Secret Admin Path (Portfolio Security)
+
+**As of September 2025, this project uses a secret admin path for demo/portfolio security.**
+
+- The previous invite token system (see `backend/models/InviteToken.js`) has been fully removed for simplicity and demo-friendliness.
+- Admin access is now protected by a secret path (e.g., `/admin-PORTFOLIO2025`). Only users who know this path can access the admin login screen.
+- All invite-related endpoints, models, and UI have been deleted.
+- This approach is ideal for portfolio/demo use—just share the secret path with trusted viewers.
+
+**To change the secret path:**
+Edit the `REACT_APP_ADMIN_PATH` in your frontend environment or update the path in `App.jsx` as needed.
+
+**Note:** For real production use, always combine this with strong authentication and consider additional access controls.
 
 - **Comprehensive Overview**: Stats, recent contacts, system status
 - **Contact Management**: View, search, filter, and respond to inquiries

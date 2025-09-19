@@ -12,6 +12,8 @@ const api = axios.create({
 
 const AdminDashboard = ({ onLogout }) => {
   const [contacts, setContacts] = useState([]);
+  const [metrics, setMetrics] = useState({ totalContacts: 0, unresponded: 0, recentBugs: [] });
+  const [bugs, setBugs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -20,7 +22,9 @@ const AdminDashboard = ({ onLogout }) => {
     const fetchContacts = async () => {
       try {
         setLoading(true);
-        const response = await api.get('/contact');
+        const auth = localStorage.getItem('adminAuth');
+        const token = auth ? JSON.parse(auth).token : null;
+        const response = await api.get('/contact', { headers: token ? { Authorization: `Bearer ${token}` } : {} });
         setContacts(response.data.data || []);
         setError('');
       } catch (err) {
@@ -32,6 +36,31 @@ const AdminDashboard = ({ onLogout }) => {
     };
 
     fetchContacts();
+    // also fetch dashboard metrics and recent bugs
+    const fetchDashboard = async () => {
+      try {
+        const auth = localStorage.getItem('adminAuth');
+        const token = auth ? JSON.parse(auth).token : null;
+        const resp = await api.get('/admin/dashboard', { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+        if (resp.data && resp.data.data) setMetrics(resp.data.data);
+      } catch (err) {
+        logger.error('Error fetching dashboard metrics', err);
+      }
+    };
+
+    const fetchBugs = async () => {
+      try {
+        const auth = localStorage.getItem('adminAuth');
+        const token = auth ? JSON.parse(auth).token : null;
+        const resp = await api.get('/admin/bugs', { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+        if (resp.data && resp.data.data) setBugs(resp.data.data);
+      } catch (err) {
+        logger.error('Error fetching bugs', err);
+      }
+    };
+
+    fetchDashboard();
+    fetchBugs();
   }, []);
 
   const handleLogout = () => {
@@ -42,7 +71,9 @@ const AdminDashboard = ({ onLogout }) => {
   const refreshContacts = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/contact');
+      const auth = localStorage.getItem('adminAuth');
+      const token = auth ? JSON.parse(auth).token : null;
+      const response = await api.get('/contact', { headers: token ? { Authorization: `Bearer ${token}` } : {} });
       setContacts(response.data.data || []);
       setError('');
     } catch (err) {
@@ -119,6 +150,7 @@ const AdminDashboard = ({ onLogout }) => {
         <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden">
           <div className="p-6 border-b border-white/10">
             <h2 className="text-xl font-semibold">Contact Submissions ({contacts.length})</h2>
+            <div className="text-sm text-gray-400 mt-1">Total contacts: {metrics.totalContacts ?? contacts.length} • Unresponded: {metrics.unresponded ?? contacts.filter(c=>!c.responded).length}</div>
           </div>
 
           {contacts.length === 0 ? (
@@ -189,7 +221,7 @@ const AdminDashboard = ({ onLogout }) => {
         <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
             <h3 className="text-lg font-semibold mb-2">Total Submissions</h3>
-            <p className="text-3xl font-bold text-purple-400">{contacts.length}</p>
+            <p className="text-3xl font-bold text-purple-400">{metrics.totalContacts ?? contacts.length}</p>
           </div>
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
             <h3 className="text-lg font-semibold mb-2">New Messages</h3>
@@ -205,6 +237,32 @@ const AdminDashboard = ({ onLogout }) => {
                 : 0
               }%
             </p>
+          </div>
+        </div>
+
+        {/* Recent Bugs */}
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold mb-3">Recent Bug Reports</h3>
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
+            {bugs.length === 0 ? (
+              <div className="text-gray-400">No bug reports yet.</div>
+            ) : (
+              <ul className="space-y-3">
+                {bugs.slice(0,10).map(b => (
+                  <li key={b._id} className="p-3 bg-black/10 rounded">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="font-semibold">{b.title}</div>
+                        <div className="text-sm text-gray-400">{b.reporterEmail || 'Anonymous'} • {new Date(b.createdAt).toLocaleString()}</div>
+                        <div className="text-gray-300 mt-2">{b.description}</div>
+                        {b.url && <div className="text-xs text-purple-300 mt-2 truncate">{b.url}</div>}
+                      </div>
+                      <div className="text-sm text-gray-300">{b.status || 'new'}</div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </div>
       </div>

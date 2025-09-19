@@ -10,7 +10,7 @@
     "install:all": "cd backend && npm install && cd ../frontend && npm install",
     "build": "cd frontend && npm run build",
     "start:prod": "cd backend && npm start",
-    "start:all": "./scripts/run-dev.sh"
+  "start:all": "node ./scripts/run-dev.js"
   },
   "devDependencies": {
     "concurrently": "^7.6.0"

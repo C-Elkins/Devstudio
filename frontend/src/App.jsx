@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Camera, Code, Palette, Zap, ArrowRight, Star, Menu, X, Github, Twitter, Linkedin, Send, MapPin, Phone, Mail } from 'lucide-react';
 import SecureAdmin from './SecureAdmin';
 import logger from './logger';
+import ReportBug from './ReportBug';
 
 // API base URL (CRA-compatible)
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5002/api';
@@ -251,23 +252,6 @@ const App = () => {
                 key={item}
                 onClick={() => {
                   setActiveSection(item.toLowerCase());
-                  // Secret admin access: triple-click on "Contact"
-                  if (item === 'Contact') {
-                    const now = Date.now();
-                    const lastClick = window.lastContactClick || 0;
-                    const clickCount = window.contactClickCount || 0;
-                    
-                    if (now - lastClick < 500) { // Within 500ms
-                      window.contactClickCount = clickCount + 1;
-                      if (window.contactClickCount >= 3) {
-                        setShowAdmin(true);
-                        window.contactClickCount = 0;
-                      }
-                    } else {
-                      window.contactClickCount = 1;
-                    }
-                    window.lastContactClick = now;
-                  }
                 }}
                 className={`relative px-3 py-2 text-sm font-medium transition-all duration-300 ${
                   activeSection === item.toLowerCase()
@@ -552,11 +536,35 @@ const App = () => {
     }
   };
 
+  // If the URL path matches the secret admin path, show the admin UI.
+  useEffect(() => {
+    const path = window.location.pathname.replace(/\/$/, '');
+    // Set your secret admin path here:
+    const secretPath = '/admin-PORTFOLIO2025';
+    if (path === secretPath) {
+      setShowAdmin(true);
+    }
+  }, []);
+
   if (showAdmin) {
-    return <SecureAdmin onBack={() => {
-      localStorage.removeItem('adminAuth');
-      setShowAdmin(false);
-    }} />;
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900 flex items-center justify-center">
+        <div className="w-full max-w-lg mx-auto p-8 rounded-3xl shadow-2xl bg-white/10 border border-white/10 backdrop-blur-lg animate-fade-in">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-400 flex items-center justify-center mb-3 shadow-lg animate-bounce">
+              <svg width="40" height="40" fill="none" viewBox="0 0 24 24"><path stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 19v-6m0 0V5m0 8H6m6 0h6"/></svg>
+            </div>
+            <h2 className="text-3xl font-bold text-center bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent animate-fade-in">Welcome to the Admin Panel</h2>
+            <p className="text-lg text-gray-200 mt-2 text-center animate-fade-in">Portfolio Demo — Secure & Flashy</p>
+          </div>
+          <SecureAdmin onBack={() => {
+            localStorage.removeItem('adminAuth');
+            setShowAdmin(false);
+            window.history.replaceState({}, '', '/');
+          }} />
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -564,10 +572,12 @@ const App = () => {
       <Navigation />
       <main className="pt-16">
         {renderActiveSection()}
+        {/* Report Bug form */}
+        <ReportBug />
       </main>
       
       {/* Footer */}
-      <footer className="bg-black/20 backdrop-blur-sm border-t border-white/10 py-8">
+      <footer className="bg-black/20 backdrop-blur-sm border-t border-white/10 py-8 relative">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <div className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
             DevStudio
@@ -575,6 +585,10 @@ const App = () => {
           <p className="text-gray-400">
             © 2024 DevStudio. Crafting digital experiences that matter.
           </p>
+        </div>
+        {/* Floating Report Bug button */}
+        <div className="fixed bottom-6 right-6 z-50">
+          <a href="#report-bug" onClick={(e)=>{e.preventDefault(); const el = document.getElementById('report-bug'); if (el) el.scrollIntoView({behavior:'smooth'})}} className="px-4 py-3 bg-red-600 hover:bg-red-700 rounded-full text-white font-semibold shadow-lg">Report Bug</a>
         </div>
       </footer>
     </div>
