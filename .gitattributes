@@ -1,0 +1,28 @@
+# GitHub Language Detection Configuration
+
+# Exclude generated files and build artifacts from language stats
+frontend/build/* linguist-generated=true
+control-center/dist/* linguist-generated=true
+*/node_modules/* linguist-vendored=true
+package-lock.json linguist-generated=true
+*.lock linguist-generated=true
+
+# Mark documentation and config files appropriately  
+*.md linguist-documentation=true
+docs/* linguist-documentation=true
+
+# Emphasize main source code and stylesheets
+frontend/src/*.jsx linguist-language=JavaScript
+frontend/src/*.js linguist-language=JavaScript
+backend/*.js linguist-language=JavaScript
+control-center/src/*.jsx linguist-language=JavaScript
+styles/*.css linguist-language=CSS
+*.css linguist-language=CSS
+*.html linguist-language=HTML
+
+# TypeScript files
+*.ts linguist-language=TypeScript
+*.tsx linguist-language=TypeScript
+
+# JSON configuration files
+*.json linguist-language=JSON
