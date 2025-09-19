@@ -3,8 +3,6 @@ import { ArrowRight, Github, ExternalLink, Star, Clock, Users, TrendingUp } from
 
 const Interactive3DProjects = ({ projects }) => {
   const [selectedProject, setSelectedProject] = useState(null);
-  // eslint-disable-next-line no-unused-vars
-  const [hoveredCard, setHoveredCard] = useState(null);
   const cardRefs = useRef([]);
 
   // Apple-style smooth mouse tracking for 3D effect (optimized)
@@ -63,7 +61,6 @@ const Interactive3DProjects = ({ projects }) => {
         glint.style.transition = 'opacity 0.3s ease';
       }
     }
-    setHoveredCard(null);
   };
 
   // Keyboard accessibility: focus/blur for 3D effect
@@ -252,7 +249,6 @@ const Interactive3DProjects = ({ projects }) => {
             aria-label={`Project: ${project.title}`}
             onMouseMove={(e) => {
               handleMouseMove(e, index);
-              setHoveredCard(index);
             }}
             onMouseLeave={() => handleMouseLeave(index)}
             onFocus={() => handleCardFocus(index)}

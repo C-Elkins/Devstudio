@@ -25,15 +25,6 @@ const SecureAdmin = ({ onBack }) => {
     } catch (err) {}
   }, [apiBase]);
 
-  // 2FA setup/load status
-  // eslint-disable-next-line no-unused-vars
-  const load2FAStatus = async () => {
-    try {
-      setTwoFAStatus('');
-      setTwoFA({ enabled: false, qr: '', otpauth: '' });
-    } catch {}
-  };
-
   const handle2FASetup = async () => {
     try {
       setTwoFAStatus('');
