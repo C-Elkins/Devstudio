@@ -21,7 +21,14 @@ jobs:
     - name: Install dependencies
       run: |
         npm install
-    - name: Lint and Build
+        cd frontend && npm install
+        cd ../backend && npm install
+    - name: Build Frontend
       run: |
-        npm run build || true
-        npm run lint
+        cd frontend && npm run build
+    - name: Lint Frontend
+      run: |
+        cd frontend && npm run lint
+    - name: Lint Backend
+      run: |
+        cd backend && npm run lint
