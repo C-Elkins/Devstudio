@@ -17,7 +17,7 @@
     "test": "cd backend && npm test && cd ../frontend && npm test"
   },
   "devDependencies": {
-    "concurrently": "^7.6.0"
+    "concurrently": "^9.2.1"
   },
   "keywords": [
     "react",
