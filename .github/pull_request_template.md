@@ -50,6 +50,7 @@ Add screenshots to help explain your changes.
 - [ ] I have added tests that prove my fix is effective or that my feature works
 - [ ] New and existing unit tests pass locally with my changes
 - [ ] Any dependent changes have been merged and published
+- [ ] All commits are signed off (DCO compliance)
 
 ## 📋 Additional Notes
 
