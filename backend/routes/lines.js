@@ -21,7 +21,11 @@ router.get('/', async (req, res) => {
       '**/.cache/**',
       '**/.vscode/**',
       '**/.DS_Store',
-      '**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.svg', '**/*.ico', '**/*.ttf', '**/*.woff', '**/*.woff2', '**/*.eot', '**/*.mp4', '**/*.mp3', '**/*.zip', '**/*.tar', '**/*.gz', '**/*.pdf', '**/*.exe', '**/*.bin', '**/*.out', '**/*.log'
+      // Binary and large file types
+      '**/*.png', '**/*.jpg', '**/*.jpeg', '**/*.svg', '**/*.ico',
+      '**/*.ttf', '**/*.woff', '**/*.woff2', '**/*.eot',
+      '**/*.mp4', '**/*.mp3', '**/*.zip', '**/*.tar', '**/*.gz', '**/*.pdf',
+      '**/*.exe', '**/*.bin', '**/*.out', '**/*.log', '**/*.sqlite', '**/*.db'
     ];
     const patterns = [
       '**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx', '**/*.py', '**/*.sh', '**/*.json', '**/*.css', '**/*.html',
@@ -32,6 +36,9 @@ router.get('/', async (req, res) => {
       const files = await fg(patterns, { ignore, dot: true, cwd: dir, absolute: true });
       for (const file of files) {
         try {
+          const stat = fs.statSync(file);
+          // Skip files larger than 1MB to avoid heavy CPU usage
+          if (stat.size > 1024 * 1024) continue;
           const content = fs.readFileSync(file, 'utf8');
           total += content.split('\n').length;
         } catch (e) {

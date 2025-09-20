@@ -26,8 +26,16 @@ connectDB();
 
 // Security middleware
 app.use(helmet());
+// CORS: support comma-separated allowlist via CLIENT_URLS or single CLIENT_URL
+const corsOrigins = (process.env.CLIENT_URLS || process.env.CLIENT_URL || 'http://localhost:5173')
+  .split(',')
+  .map(o => o.trim());
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow non-browser clients
+    const allowed = corsOrigins.includes(origin);
+    callback(allowed ? null : new Error('Not allowed by CORS'), allowed);
+  },
   credentials: true
 }));
 
@@ -126,6 +134,16 @@ app.listen(PORT, () => {
   logger.info({ port: PORT, env: process.env.NODE_ENV || 'development' }, 'Server started');
   logger.info({ url: `http://localhost:${PORT}/api` }, 'API URL');
 });
+
+// Basic production sanity checks
+if (process.env.NODE_ENV === 'production') {
+  if (!process.env.JWT_SECRET) {
+    logger.warn('JWT_SECRET is not set in production environment. Tokens will be insecure.');
+  }
+  if (!process.env.MONGODB_URI) {
+    logger.warn('MONGODB_URI is not set in production environment. Using default connection string.');
+  }
+}
 
 // Seed an initial admin in development if none exists (safe default)
 (async function seedAdmin() {

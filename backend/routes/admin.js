@@ -97,6 +97,15 @@ router.post('/create', [
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
+    const express = require('express');
+    const jwt = require('jsonwebtoken');
+    const Admin = require('../models/Admin');
+    const speakeasy = require('speakeasy');
+    const qrcode = require('qrcode');
+    const { body, validationResult } = require('express-validator');
+    const { logger } = require('../logger');
+    const BugReport = require('../models/BugReport');
+
     const { username, password, email } = req.body;
     const count = await Admin.countDocuments();
 
