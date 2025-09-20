@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Discussions
+    url: https://github.com/C-Elkins/devstudio-portfolio/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 🔒 Security Issues
+    url: https://github.com/C-Elkins/devstudio-portfolio/security/advisories
+    about: Report security vulnerabilities privately

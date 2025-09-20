@@ -57,4 +57,4 @@ Add any other notes about the PR here.
 
 ---
 
-By submitting this pull request, I confirm that my contribution is made under the terms of the MIT License and I agree to follow the project's [Code of Conduct](https://github.com/C-Elkins/devstudio-portfolio/blob/main/docs/CODE_OF_CONDUCT.md).
+By submitting this pull request, I confirm that my contribution is made under the terms of the MIT License and I agree to follow the project's [Code of Conduct](https://github.com/C-Elkins/devstudio-portfolio/blob/main/CODE_OF_CONDUCT.md).
