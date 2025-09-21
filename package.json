@@ -4,14 +4,14 @@
   "description": "DevStudio Full-Stack Application",
   "scripts": {
     "setup": "chmod +x setup.sh && ./setup.sh",
-    "gui": "cd control-center && npm run dev",
-    "gui:install": "cd control-center && npm install",
+    "gui": "bash scripts/gui.sh",
+    "gui:install": "bash scripts/gui-install.sh",
     "old-gui": "bash open-gui.sh",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm start",
     "start": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "install:all": "cd backend && npm install && cd ../frontend && npm install && cd ../control-center && npm install",
+    "install:all": "bash scripts/install-all.sh",
     "build": "cd frontend && npm run build",
     "start:prod": "cd backend && npm start",
     "test": "cd backend && npm test && cd ../frontend && npm test"

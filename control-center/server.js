@@ -9,11 +9,24 @@ const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Development-only Control Center API
+// WARNING: This server is intended for local development only and must not be
+// deployed publicly. It includes endpoints that can manage local processes.
+// A hard guard below disables it in production environments.
 const app = express();
 const port = 3001;
 
 // Enable CORS for the React GUI
-app.use(cors());
+const allowedOrigins = new Set([
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+]);
+app.use(cors({
+  origin(origin, cb) {
+    if (!origin) return cb(null, true); // allow curl/local tools
+    cb(allowedOrigins.has(origin) ? null : new Error('Not allowed by CORS'), allowedOrigins.has(origin));
+  },
+}));
 app.use(express.json());
 
 class ServiceManager {
@@ -327,6 +340,12 @@ class ServiceManager {
   }
 }
 
+// Hard production guard: refuse to start in production
+if (process.env.NODE_ENV === 'production') {
+  console.warn('[Control Center] Refusing to start in production. Set NODE_ENV!=production for local use.');
+  process.exit(1);
+}
+
 const serviceManager = new ServiceManager();
 
 // API Routes
@@ -521,8 +540,9 @@ app.post('/api/actions/:action', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`GUI API server running on http://localhost:${port}`);
+// Bind to loopback only to avoid any external exposure
+app.listen(port, '127.0.0.1', () => {
+  console.log(`GUI API server running on http://127.0.0.1:${port}`);
 });
 
 export default app;

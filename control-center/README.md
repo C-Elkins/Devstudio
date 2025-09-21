@@ -1,12 +1,15 @@
-# React + Vite
+# Control Center (Development Only)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Important: This Control Center is strictly for local development.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- The API server binds to 127.0.0.1 only and rejects non-local origins.
+- It exits immediately if NODE_ENV=production.
+- CI will fail pushes/tags to production branches when the control-center/ directory exists.
 
-## Expanding the ESLint configuration
+Local usage
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Start GUI: from repo root run `npm run gui`
+- Start API: run the start script in Start Scripts or `node server.js` from this folder
+
+Do not deploy this app. Remove this entire folder before release. See ../../docs/REMOVE-CONTROL-CENTER.md.

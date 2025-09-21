@@ -65,12 +65,13 @@ const AdminLogin = ({ onLogin }) => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Username Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
                 Username
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
+                  id="username"
                   type="text"
                   value={credentials.username}
                   onChange={(e) => setCredentials(prev => ({ ...prev, username: e.target.value }))}
@@ -84,12 +85,13 @@ const AdminLogin = ({ onLogin }) => {
 
             {/* Password Field */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
                 Password
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
+                  id="password"
                   type={showPassword ? 'text' : 'password'}
                   value={credentials.password}
                   onChange={(e) => setCredentials(prev => ({ ...prev, password: e.target.value }))}
@@ -118,10 +120,11 @@ const AdminLogin = ({ onLogin }) => {
             {/* 2FA Token Field */}
             {require2FA && (
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label htmlFor="twofa" className="block text-sm font-medium text-gray-300 mb-2">
                   2FA Code
                 </label>
                 <input
+                  id="twofa"
                   type="text"
                   value={twoFAToken}
                   onChange={e => setTwoFAToken(e.target.value)}

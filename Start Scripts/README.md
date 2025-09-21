@@ -4,47 +4,45 @@ This folder contains simple, reliable startup scripts for your DevStudio develop
 
 ## 📁 Available Scripts
 
-### Start Services:
+### Start Services
+
 - **`start-frontend.sh`** - Start React frontend (port 3000)
 - **`start-backend.sh`** - Start backend API (port 5002)
-- **`start-api.sh`** - Start Control Center API (port 3001)
-- **`start-control-center.sh`** - Start Control Center GUI (port 5173)
 - **`start-database.sh`** - Start MongoDB database (port 27017)
-- **`start-everything.sh`** - Start all services at once 🎯
+- **`start-everything.sh`** - Start all essential services 🎯
 
-### Stop Services:
+### Stop Services (examples)
+
 - **`stop-frontend.sh`** - Stop React frontend
 - **`stop-backend.sh`** - Stop backend API
-- **`stop-api.sh`** - Stop Control Center API
-- **`stop-control-center.sh`** - Stop Control Center GUI
 - **`stop-everything.sh`** - Stop all services 🛑
 
-### Restart Services:
+### Restart Services (examples)
+
 - **`restart-frontend.sh`** - Restart React frontend
 - **`restart-backend.sh`** - Restart backend API
-- **`restart-api.sh`** - Restart Control Center API
-- **`restart-control-center.sh`** - Restart Control Center GUI
 - **`restart-everything.sh`** - Restart all services 🔄
 
 ## ⚡ Quick Start
 
-### Start Everything (Recommended):
+### Start Everything (Recommended)
+
 ```bash
 cd "Start Scripts"
 ./start-everything.sh
 ```
 
-### Start Individual Services:
+### Start Individual Services
+
 ```bash
 cd "Start Scripts"
 ./start-frontend.sh      # Main React app
 ./start-backend.sh       # Backend API
-./start-control-center.sh # Control Center GUI
-./start-api.sh           # Control Center API
 ./start-database.sh      # MongoDB
 ```
 
-### Stop Services:
+### Stop Services
+
 ```bash
 cd "Start Scripts"
 ./stop-everything.sh     # Stop all services
@@ -52,7 +50,8 @@ cd "Start Scripts"
 ./stop-backend.sh        # Stop just backend
 ```
 
-### Restart Services:
+### Restart Services
+
 ```bash
 cd "Start Scripts"
 ./restart-everything.sh  # Restart all services
@@ -64,10 +63,8 @@ cd "Start Scripts"
 
 | Service | URL | Description |
 |---------|-----|-------------|
-| **Frontend** | http://localhost:3000 | Main React application |
-| **Backend API** | http://localhost:5002 | Backend API server |
-| **Control Center** | http://localhost:5173 | Service management GUI |
-| **Control Center API** | http://localhost:3001 | API for Control Center |
+| **Frontend** | [http://localhost:3000](http://localhost:3000) | Main React application |
+| **Backend API** | [http://localhost:5002](http://localhost:5002) | Backend API server |
 | **Database** | mongodb://localhost:27017 | MongoDB database |
 
 ## ✨ Features
@@ -82,9 +79,7 @@ cd "Start Scripts"
 ## 🎯 Recommended Workflow
 
 1. **Start everything:** `./start-everything.sh`
-2. **Visit Control Center:** http://localhost:5173
-3. **Use Control Center** to manage services
-4. **Visit main app:** http://localhost:3000
+2. **Visit main app:** [http://localhost:3000](http://localhost:3000)
 
 ## 🛠️ Troubleshooting
 
@@ -95,4 +90,4 @@ cd "Start Scripts"
 
 ---
 
-*Simple, reliable, and easy to use! 🚀*
+_Simple, reliable, and easy to use! 🚀_

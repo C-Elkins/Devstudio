@@ -64,8 +64,6 @@ stop_process() {
 }
 
 # Stop all services
-stop_port "5173" "Control Center GUI"
-stop_port "3001" "Control Center API"
 stop_port "3000" "Frontend React App"
 stop_port "5002" "Backend API"
 

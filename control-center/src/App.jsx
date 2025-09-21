@@ -128,7 +128,7 @@ function App() {
   const [logs, setLogs] = useState([]);
   const [gitInfo, setGitInfo] = useState('API Offline');
   const [apiConnected, setApiConnected] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true); // not used; keep if needed later
 
   const addLog = (message) => {
     const timestamp = new Date().toLocaleTimeString();

@@ -100,7 +100,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use((err, req, res, _next) => {
   // Structured logging of error
   logger.error({ reqId: req && req.id, err }, 'Unhandled error');
 
@@ -108,7 +108,7 @@ app.use((err, req, res, next) => {
   try {
     const Sentry = require('@sentry/node');
     if (Sentry && process.env.SENTRY_DSN) Sentry.captureException(err);
-  } catch (_) {}
+  } catch (_) { void _; }
 
   const statusCode = err && err.status ? err.status : 500;
   const response = {

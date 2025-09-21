@@ -497,7 +497,7 @@ const App = () => {
               { label: 'Fun', key: 'fun' },
               { label: 'Contact', key: 'contact' }
             ].map((item) => (
-              <div key={item.key} className="relative group" tabIndex={0} onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setDropdownOpen(null); }}>
+              <div key={item.key} className="relative group" onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget)) setDropdownOpen(null); }}>
                 <button
                   onClick={() => setActiveSection(item.key.replace(/-.*/,''))}
                   onMouseEnter={() => item.dropdown && setDropdownOpen(item.key)}
@@ -583,7 +583,7 @@ const App = () => {
             Digital Dreams
           </span>
         </h1>
-        <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed animate-fade-in-up-delayed drop-shadow">
+            <p className="text-xl md:text-2xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed animate-fade-in-up-delayed drop-shadow">
           Full-stack development that combines cutting-edge technology with stunning design to create experiences that matter.
         </p>
         <div className="flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up-delayed-2">
@@ -616,7 +616,7 @@ const App = () => {
           <div className="glass-apple p-6 md:p-10 rounded-3xl shadow-2xl flex flex-col gap-8 flex-1 min-h-[340px] md:min-h-[420px]">
             <h3 className="text-3xl font-bold text-white mb-4">Crafting Digital Excellence</h3>
             <p className="text-gray-300 text-lg leading-relaxed mb-4">
-              We're a team of passionate developers and designers who believe technology should be beautiful, functional, and transformative. Every project is an opportunity to push boundaries and exceed expectations.
+              We&apos;re a team of passionate developers and designers who believe technology should be beautiful, functional, and transformative. Every project is an opportunity to push boundaries and exceed expectations.
             </p>
             <p className="text-gray-300 text-lg leading-relaxed">
               From concept to deployment, we handle every aspect of your digital presence with meticulous attention to detail and cutting-edge expertise.
@@ -788,7 +788,7 @@ const App = () => {
                     <Star key={i} size={18} className="text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <p className="text-gray-300 mb-4">"{testimonial.text}"</p>
+                <p className="text-gray-300 mb-4">&quot;{testimonial.text}&quot;</p>
                 <div>
                   <div className="text-white font-semibold">{testimonial.name}</div>
                   <div className="text-gray-400 text-sm">{testimonial.role}</div>
@@ -836,9 +836,9 @@ const App = () => {
         </div>
         <div className="grid md:grid-cols-2 gap-16">
           <div>
-            <h3 className="text-2xl font-bold text-white mb-8">Let's Build Something Amazing</h3>
+            <h3 className="text-2xl font-bold text-white mb-8">Let&apos;s Build Something Amazing</h3>
             <p className="text-gray-300 mb-10">
-              Ready to transform your vision into reality? We'd love to hear about your project and discuss how we can help you achieve your goals.
+              Ready to transform your vision into reality? We&apos;d love to hear about your project and discuss how we can help you achieve your goals.
             </p>
             <div className="space-y-5">
               <div className="flex items-center text-gray-300">

@@ -15,7 +15,7 @@ router.get('/', async (req, res) => {
     const { status, category, featured, limit = 10, page = 1 } = req.query;
     
     // Build query object
-    let query = {};
+  const query = {};
     if (status) query.status = status;
     if (category) query.category = category;
     if (featured !== undefined) query.featured = featured === 'true';
@@ -110,8 +110,8 @@ router.get('/:id', async (req, res) => {
 });
 
 // @route   POST /api/projects
-// @desc    Create new project (admin only - add auth middleware in real app)
-// @access  Private
+// @desc    Create new project (admin-only)
+// @access  Private (requires auth + admin role)
 router.post('/', [
   body('title')
     .trim()

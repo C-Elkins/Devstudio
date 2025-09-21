@@ -90,6 +90,10 @@ const Interactive3DProjects = ({ projects }) => {
         <div 
           className="absolute inset-0 bg-black/60 backdrop-blur-xl modal-backdrop"
           onClick={onClose}
+          onKeyDown={(e)=>{ if(e.key==='Enter' || e.key===' ') onClose() }}
+          role="button"
+          tabIndex={0}
+          aria-label="Close project modal"
         />
         
         {/* Apple-style modal */}
@@ -246,6 +250,7 @@ const Interactive3DProjects = ({ projects }) => {
               transition: 'all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
             }}
             tabIndex={0}
+            role="button"
             aria-label={`Project: ${project.title}`}
             onMouseMove={(e) => {
               handleMouseMove(e, index);
@@ -329,7 +334,7 @@ const Interactive3DProjects = ({ projects }) => {
       )}
       
       {/* Apple-style CSS animations and mobile fallback */}
-      <style jsx>{`
+      <style>{`
         .apple-card {
           will-change: transform;
         }
@@ -377,7 +382,7 @@ const Interactive3DProjects = ({ projects }) => {
             transition: transform 0.2s cubic-bezier(0.25,0.46,0.45,0.94);
           }
         }
-      `}</style>
+  `}</style>
     </div>
   );
 };

@@ -34,7 +34,7 @@ const ReportBug = ({ modalMode = false, onSubmitSuccess }) => {
     <div className={modalMode ? '' : 'max-w-3xl mx-auto p-6 mt-12'}>
       <div className={modalMode ? '' : 'bg-white/5 border border-white/10 rounded p-6'}>
         <h3 className="text-lg font-semibold mb-2">Report a Bug</h3>
-        <p className="text-gray-400 text-sm mb-4">Tell us what went wrong and where. We'll review it in the admin dashboard.</p>
+  <p className="text-gray-400 text-sm mb-4">Tell us what went wrong and where. We&apos;ll review it in the admin dashboard.</p>
         <input 
           placeholder="Title" 
           value={title} 

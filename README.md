@@ -11,7 +11,7 @@
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![React Version](https://img.shields.io/badge/react-%5E18.2.0-blue)](https://reactjs.org/)
 
-[🚀 Live Demo](#) • [📖 Documentation](docs/) • [🛠️ Installation](#installation) • [🎮 Control Center](#control-center)
+[🚀 Live Demo](#) • [📖 Documentation](docs/) • [🛠️ Installation](#installation)
 
 </div>
 
@@ -29,15 +29,12 @@
 - **Contact Forms** - Automated inquiry handling and notifications
 - **Project Management** - CRUD operations for portfolio projects
 
-### 🎛️ **Control Center** ⭐
-- **Service Management** - Start, stop, and monitor all services from one interface
-- **Real-Time Status** - Live monitoring of frontend, backend, database, and API
-- **Offline Capability** - Works even when services are down
-- **Modern UI** - Built with React + Material-UI for a premium experience
+<!-- Control Center (development-only) intentionally omitted from public README -->
 
 ## 🚀 Quick Start
 
 ### One-Command Setup
+
 ```bash
 # Clone the repository
 git clone https://github.com/C-Elkins/Devstudio-portfolio.git
@@ -49,8 +46,8 @@ cd "Start Scripts"
 ```
 
 ### 🌐 Access Your Applications
+
 - **📱 Main Portfolio:** [http://localhost:3000](http://localhost:3000)
-- **🎛️ Control Center:** [http://localhost:5173](http://localhost:5173)
 - **⚙️ Backend API:** [http://localhost:5002](http://localhost:5002)
 - **🗄️ Database:** `mongodb://localhost:27017`
 
@@ -60,7 +57,7 @@ cd "Start Scripts"
 DevStudio-Portfolio/
 ├── 🏠 frontend/              # React portfolio website
 ├── ⚙️  backend/               # Node.js API server  
-├── 🎛️  control-center/        # Service management GUI
+<!-- control-center/ is development-only and omitted from public docs -->
 ├── 🚀 Start Scripts/          # Easy service management
 │   ├── start-everything.sh    # Launch all services
 │   ├── stop-everything.sh     # Stop all services
@@ -73,11 +70,13 @@ DevStudio-Portfolio/
 ## 🛠️ Installation
 
 ### Prerequisites
-- **Node.js** 18+ 
+
+- **Node.js** 18+
 - **MongoDB** (local or cloud)
 - **Git**
 
 ### Manual Setup
+
 ```bash
 # 1. Install dependencies
 npm run install:all
@@ -90,30 +89,15 @@ cp config/.env.example config/.env
 ./scripts/services/start-database.sh
 ./scripts/services/start-backend.sh
 ./scripts/services/start-frontend.sh
-./scripts/services/start-control-center.sh
+ 
 ```
 
-## 🎮 Control Center
-
-The **DevStudio Control Center** is a modern React application that provides comprehensive service management:
-
-### Features
-- 🔴 **Service Status** - Real-time monitoring of all components
-- ⚡ **Quick Actions** - Start/stop services with one click
-- 📊 **System Info** - Git branch, commit status, and service health
-- 🌙 **Offline Mode** - Graceful degradation when API is unavailable
-- 🎨 **Modern UI** - Material-UI components with smooth animations
-
-### Screenshots
-```bash
-# Launch the Control Center
-npm run gui
-# Visit: http://localhost:5173
-```
+<!-- Control Center section intentionally removed from public README -->
 
 ## 🚀 Easy Service Management
 
 ### Start Scripts Folder
+
 We've created a dedicated **"Start Scripts"** folder for effortless service management:
 
 ```bash
@@ -131,7 +115,7 @@ cd "Start Scripts"
 # Individual service control
 ./start-frontend.sh
 ./start-backend.sh
-./start-control-center.sh
+# (development-only scripts omitted)
 ```
 
 ## 🔧 Development
@@ -139,6 +123,7 @@ cd "Start Scripts"
 ### Available Scripts
 
 #### Root Level
+
 ```bash
 npm run gui              # Launch Control Center
 npm run dev              # Start backend + frontend
@@ -147,6 +132,7 @@ npm run build            # Build frontend for production
 ```
 
 #### Frontend
+
 ```bash
 cd frontend
 npm start               # Development server
@@ -156,6 +142,7 @@ npm run lint           # ESLint check
 ```
 
 #### Backend
+
 ```bash
 cd backend
 npm run dev            # Development server (nodemon)
@@ -163,24 +150,20 @@ npm start             # Production server
 npm test              # Run tests
 ```
 
-#### Control Center
-```bash
-cd control-center
-npm run dev           # Development server (Vite)
-npm run build         # Production build
-npm run server        # API server
-```
+<!-- Control Center scripts intentionally omitted from public README -->
 
 ## 🌟 Tech Stack
 
 ### Frontend
+
 - **React** 18+ - Modern UI library
 - **Material-UI** - Premium component library
 - **Lucide React** - Beautiful icons
 - **CSS3** - Custom styling with glassmorphism
 - **Vite** - Lightning-fast build tool
 
-### Backend
+### Backend (API)
+
 - **Node.js** - JavaScript runtime
 - **Express** - Web framework
 - **MongoDB** - NoSQL database
@@ -189,6 +172,7 @@ npm run server        # API server
 - **Helmet** - Security middleware
 
 ### DevOps
+
 - **GitHub Actions** - CI/CD pipeline
 - **ESLint** - Code linting
 - **Nodemon** - Development auto-restart
@@ -196,7 +180,7 @@ npm run server        # API server
 ## 📖 Documentation
 
 - [📋 Setup Guide](docs/SETUP-GUIDE.md)
-- [🏗️ Project Structure](docs/PROJECT_STRUCTURE.md) 
+- [🏗️ Project Structure](docs/PROJECT_STRUCTURE.md)
 - [🤝 Contributing](docs/CONTRIBUTING.md)
 - [🔒 Security](docs/SECURITY_AUDIT.md)
 
@@ -214,7 +198,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 👨‍💻 Author
 
-**Chase Elkins**
+Chase Elkins
+
 - GitHub: [@C-Elkins](https://github.com/C-Elkins)
 - Portfolio: [Your Portfolio URL]
 
@@ -224,10 +209,6 @@ Give a ⭐ if this project helped you!
 
 ---
 
-<div align="center">
+Built with ❤️ using React, Node.js, and MongoDB
 
-**Built with ❤️ using React, Node.js, and MongoDB**
-
-*Professional portfolio solution with integrated service management*
-
-</div>
+Professional portfolio solution with integrated service management

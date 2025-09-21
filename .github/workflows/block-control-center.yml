@@ -1,0 +1,31 @@
+name: Block Control Center in Production
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*.*.*'
+  pull_request:
+    branches:
+      - main
+      - master
+
+jobs:
+  check-control-center:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fail if control-center folder exists on release paths
+        run: |
+          if [ -d "control-center" ]; then
+            echo "❌ Control Center directory detected. This tool is development-only and must not ship to production." >&2
+            echo "Please remove 'control-center/' before merging to main or creating a release tag." >&2
+            exit 1
+          fi
+          echo "✅ No control-center directory present."

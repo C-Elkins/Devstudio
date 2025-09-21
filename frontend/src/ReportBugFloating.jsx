@@ -44,7 +44,14 @@ const ReportBugFloating = () => {
       </button>
   {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
-          <div className="absolute inset-0" onClick={()=>setShowModal(false)} aria-label="Close bug report modal" />
+          <div
+            className="absolute inset-0"
+            onClick={()=>setShowModal(false)}
+            onKeyDown={(e)=>{ if(e.key==='Enter' || e.key===' ') setShowModal(false) }}
+            role="button"
+            tabIndex={0}
+            aria-label="Close bug report modal"
+          />
           <div className="relative bg-gray-900/95 border border-white/10 rounded-2xl shadow-2xl p-0 w-full max-w-lg mx-4 animate-modal-in">
             <button
               className="absolute top-4 right-4 w-10 h-10 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-all duration-300 backdrop-blur-sm"
