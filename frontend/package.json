@@ -8,7 +8,7 @@
     "lucide-react": "^0.544.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.15.0"
+    "react-router-dom": "^7.9.2"
   },
   "scripts": {
     "start": "react-scripts start",
